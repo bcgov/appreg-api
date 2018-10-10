@@ -1,0 +1,305 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "${HOST}",
+            "description": "API"
+        }
+    ],
+    "info": {
+        "title": "API Registration Generator",
+        "description": "Provides an endpoint to 'register' a new API with DataBC.  Registration refers to creating a metadata record in the BC Data Catalog (if one doesn't already exist), and optionally requesting the API be made accessible through DataBC's API Gateway.",
+        "version": "1.0",
+        "contact": {
+            "name": "Banders Geospatial Systems",
+            "email": "brock@bandersgeo.ca"
+        }
+    },
+    "tags": [
+        {
+            "name": "Register"
+        },
+    ],
+    "paths": {
+
+
+        "/register": {
+            "post": {
+                "summary": "Register an API",
+                "description": "A registration action specifies either a URL of an existing metadata record in the BC Data Catalog or details about the about needed to create a new metadata record. Additionally, some basic technical information about the API should be provided, along with requiments for using DataBC's API gateway",
+                "tags": [
+                    "Register"
+                ],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/api_registration_options"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Success",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/register_api_success"
+                        }
+                      }                      
+                    }
+                  },
+                  "400": {
+                    "description": "Invalid request body",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/error400"
+                        }
+                      }                      
+                    }
+                  }
+                }
+            },
+        },
+    },
+    "components": {
+        "schemas": {
+
+          "api_registration_options": {
+            "type": "object",
+            "required": [          
+            ],
+            "properties": {
+              "submitted_by_person": {
+                "type": "object",
+                $ref: '#/components/schemas/contact_person'
+              },
+              "existing_metadata_url": {
+                "type": "string"
+              },
+              "metadata_details": {
+                "type": "object",
+                $ref: '#/components/schemas/metadata_details'
+              },
+              "existing_api": {
+                "type": "object",
+                $ref: '#/components/schemas/existing_api'
+              }, 
+              "gateway": {
+                "type": "object",
+                $ref: '#/components/schemas/gateway'
+              },               
+            }            
+          },
+
+          "metadata_details": {
+            "type": "object",
+            "required": [
+              "title", "description", "status", "owner", "submitted_by_person", "security", "license"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "object",
+                $ref: '#/components/schemas/owner'
+              },
+              "security": {
+                "type": "object",
+                $ref: '#/components/schemas/security'
+              },
+              "license": {
+                "type": "object",
+                $ref: '#/components/schemas/license'
+              }
+            }            
+          },
+
+          "owner": {
+            "type": "object",
+            "required": [
+              "org_id", "sub_org_id"
+            ],
+            "properties": {
+              "org_id": {
+                "type": "string"
+              },
+              "sub_org_id": {
+                "type": "string"
+              },
+              "contact_person": {
+                "type": "object",
+                $ref: '#/components/schemas/contact_person'
+              }
+            }            
+          },
+
+          "contact_person": {
+            "type": "object",
+            "required": [
+              "name", "business_email", "role"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+              },
+              "org_id": {
+                "type": "string"
+              }, 
+              "sub_org_id": {
+                "type": "string"
+              },              
+              "business_email": {
+                "type": "string"
+              },
+              "business_phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "private": {
+                "type": "string"
+              },
+            }            
+          },
+
+          "security": {
+            "type": "object",
+            "required": [
+              "view_audience", "download_audience", "metadata_visibility", "security_class"
+            ],
+            "properties": {
+              "view_audience": {
+                "type": "string"
+              },
+              "download_audience": {
+                "type": "string"
+              },   
+              "metadata_visibility": {
+                "type": "string"
+              },
+              "security_class": {
+                "type": "string"
+              },                
+            }            
+          },
+
+          "license": {
+            "type": "object",
+            "required": [
+              "license_id"
+            ],
+            "properties": {
+              "license_id": {
+                "type": "integer"
+              }
+            }            
+          },
+
+          "existing_api": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "base_url": {
+                "type": "string"
+              },
+              "openapi_spec_url": {
+                "type": "string"
+              },  
+              "supports": {
+                "type": "object",
+                $ref: '#/components/schemas/supports'
+              }                          
+            }            
+          },
+  
+          "supports": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "https": {
+                "type": "boolean"
+              },
+              "cors": {
+                "type": "boolean"
+              }                           
+            }            
+          },
+
+          "gateway": {
+            "type": "object",
+            "required": [
+              "use_gateway"
+            ],
+            "properties": {
+              "use_gateway": {
+                "type": "boolean"
+              },
+              "use_throttling": {
+                "type": "boolean"
+              },
+              "restrict_access": {
+                "type": "boolean"
+              },
+              "api_shortname": {
+                "type": "string"
+              }            
+            }            
+          },
+
+          "register_api_success": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "new_metadata_record": {
+                "type": "object",
+                $ref: '#/components/schemas/new_metadata_record'
+              }              
+            }            
+          },
+
+          "new_metadata_record": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "web_url": {
+                "type": "string"
+              },
+              "api_url": {
+                "type": "string"
+              }
+            }            
+          },
+
+          "error400": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "msg": {
+                "type": "string"
+              }              
+            }            
+          }
+
+        }
+    }
+    
+}

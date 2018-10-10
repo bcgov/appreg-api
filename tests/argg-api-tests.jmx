@@ -1,0 +1,1584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (flask)" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">localhost</stringProp>
+        <stringProp name="HTTPSampler.port">5000</stringProp>
+        <stringProp name="HTTPSampler.protocol"></stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+        <stringProp name="HTTPSampler.response_timeout"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (container)" enabled="false">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">localhost</stringProp>
+        <stringProp name="HTTPSampler.port">8000</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+        <stringProp name="HTTPSampler.response_timeout"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (delivery)" enabled="false">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">argg-api-dev.pathfinder.bcgov</stringProp>
+        <stringProp name="HTTPSampler.port"></stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+        <stringProp name="HTTPSampler.response_timeout"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="root" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET root" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion" enabled="true">
+            <stringProp name="JSON_PATH">$.info.title</stringProp>
+            <stringProp name="EXPECTED_VALUE">API Registration Generator</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="register (failure)" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">b1fc98e0-7656-4507-a464-f90e96ea6b4b</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, title)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, desc)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, submitted_by_person)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;desc&quot;,&#xd;
+		&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, security)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, license)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, base_url)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (fails, gateway)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 3&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;&#xd;
+		},&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;submitted_by_person&quot;: {&#xd;
+			&quot;name&quot;: &quot;name&quot;,&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+			&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+			&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+			&quot;private&quot;: &quot;Display&quot;&#xd;
+		},&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: &quot;Access Only&quot;,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: null&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: null,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 400" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="51508">400</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="register (success)" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <stringProp name="TestPlan.comments">normal</stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">b1fc98e0-7656-4507-a464-f90e96ea6b4b</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (success)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;submitted_by_person&quot;: {&#xd;
+		&quot;name&quot;: &quot;name&quot;,&#xd;
+		&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+		&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+		&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+		&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+		&quot;role&quot;: &quot;pointOfContact&quot;&#xd;
+	},&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 4&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;contact_person&quot;: {&#xd;
+				&quot;name&quot;: &quot;name&quot;,&#xd;
+				&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+				&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+				&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+				&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+				&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+				&quot;private&quot;: &quot;Display&quot;			&#xd;
+			}			&#xd;
+		},		&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: null,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: 22&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: null,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;hasdf&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: &quot;https://raw.githubusercontent.com/bcgov/api-specs/master/bcgnws/bcgnws.json&quot;&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="TestPlan.comments">//		Attributes commented out are required to create a new BCDC metadata record, but they
+//		don&apos;t need to be required by the API Resigration app.  It can assume default values
+//		for these attributes:
+//		&quot;state&quot;: &quot;active&quot;,
+//		&quot;edc_state&quot;: &quot;DRAFT&quot;,
+//		&quot;type&quot;: &quot;WebService&quot;
+//		&quot;tag_string&quot;: &quot;API&quot;,</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="save metadata id" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">METADATA_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.new_metadata_record.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="[BCDC] check package" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="id" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${METADATA_ID}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">id</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_show</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="title" enabled="true">
+            <stringProp name="JSON_PATH">$.result.title</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="resource_status" enabled="true">
+            <stringProp name="JSON_PATH">$.result.resource_status</stringProp>
+            <stringProp name="EXPECTED_VALUE">completed</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="type: WebService" enabled="true">
+            <stringProp name="JSON_PATH">$.result.type</stringProp>
+            <stringProp name="EXPECTED_VALUE">WebService</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one resource" enabled="true">
+            <stringProp name="JSON_PATH">$.result.resources[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one tag" enabled="true">
+            <stringProp name="JSON_PATH">$.result.tags[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one group" enabled="true">
+            <stringProp name="JSON_PATH">$.result.groups[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact name" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].name</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact email" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].email</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].organization</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact branch" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].branch</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact role" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].role</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="download_audience" enabled="true">
+            <stringProp name="JSON_PATH">$.result.download_audience</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="view_audience" enabled="true">
+            <stringProp name="JSON_PATH">$.result.view_audience</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="security_class" enabled="true">
+            <stringProp name="JSON_PATH">$.result.security_class</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="metadata_visibility: Public" enabled="true">
+            <stringProp name="JSON_PATH">$.result.metadata_visibility</stringProp>
+            <stringProp name="EXPECTED_VALUE">Public</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="edc_state: DRAFT" enabled="true">
+            <stringProp name="JSON_PATH">$.result.edc_state</stringProp>
+            <stringProp name="EXPECTED_VALUE">DRAFT</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.organization</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="sub_org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.sub_org</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="[BCDC] delete package" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;id&quot;: &quot;${METADATA_ID}&quot;&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_delete</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="register (success)" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <stringProp name="TestPlan.comments">normal, but submitted_by_person uses &apos;other_org_name&apos;</stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">b1fc98e0-7656-4507-a464-f90e96ea6b4b</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST register (success)" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;submitted_by_person&quot;: {&#xd;
+		&quot;name&quot;: &quot;name&quot;,&#xd;
+		&quot;org_name&quot;: &quot;Some organization&quot;,&#xd;
+		&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+		&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+		&quot;role&quot;: &quot;pointOfContact&quot;&#xd;
+	},&#xd;
+	&quot;existing_metadata_url&quot;: null,&#xd;
+	&quot;metadata_details&quot;: {&#xd;
+		&quot;title&quot;: &quot;example api 4&quot;,&#xd;
+		&quot;owner&quot;: {&#xd;
+			&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+			&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+			&quot;contact_person&quot;: {&#xd;
+				&quot;name&quot;: &quot;name&quot;,&#xd;
+				&quot;org_id&quot;: &quot;d5316a1b-2646-4c19-9671-c12231c4ec8b&quot;,&#xd;
+				&quot;sub_org_id&quot;: &quot;c1222ef5-5013-4d9a-a9a0-373c54241e77&quot;,&#xd;
+				&quot;business_email&quot;: &quot;asdf@asdf.ca&quot;,&#xd;
+				&quot;business_phone&quot;: &quot;250-323-3423&quot;,&#xd;
+				&quot;role&quot;: &quot;pointOfContact&quot;, &#xd;
+				&quot;private&quot;: &quot;Display&quot;			&#xd;
+			}			&#xd;
+		},		&#xd;
+		&quot;description&quot;: &quot;api_desc&quot;,&#xd;
+		&quot;status&quot;: &quot;completed&quot;, &#xd;
+		&quot;security&quot;: {&#xd;
+			&quot;view_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;download_audience&quot;: &quot;Public&quot;, &#xd;
+			&quot;metadata_visibility&quot;: &quot;Public&quot;, &#xd;
+			&quot;security_class&quot;: &quot;LOW-PUBLIC&quot; &#xd;
+		},&#xd;
+		&quot;license&quot;: {&#xd;
+			&quot;license_title&quot;: null,&#xd;
+			&quot;license_url&quot;: null,&#xd;
+			&quot;license_id&quot;: 22&#xd;
+		}&#xd;
+	},&#xd;
+	&quot;existing_api&quot;: {&#xd;
+		&quot;supports&quot;: {&#xd;
+			&quot;https&quot;: true,&#xd;
+			&quot;cors&quot;: null&#xd;
+		},&#xd;
+		&quot;base_url&quot;: &quot;http://apps.gov.bc.ca/pub/bcgnws&quot;,&#xd;
+		&quot;openapi_spec_url&quot;: null&#xd;
+	},&#xd;
+	&quot;gateway&quot;: {&#xd;
+		&quot;use_gateway&quot;: true,&#xd;
+		&quot;use_throttling&quot;: true,&#xd;
+		&quot;restrict_access&quot;: false,&#xd;
+		&quot;api_shortname&quot;: null		&#xd;
+	}&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="TestPlan.comments">//		Attributes commented out are required to create a new BCDC metadata record, but they
+//		don&apos;t need to be required by the API Resigration app.  It can assume default values
+//		for these attributes:
+//		&quot;state&quot;: &quot;active&quot;,
+//		&quot;edc_state&quot;: &quot;DRAFT&quot;,
+//		&quot;type&quot;: &quot;WebService&quot;
+//		&quot;tag_string&quot;: &quot;API&quot;,</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="save metadata id" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">METADATA_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.new_metadata_record.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="http 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="[BCDC] check package" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="id" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${METADATA_ID}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">id</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_show</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="title" enabled="true">
+            <stringProp name="JSON_PATH">$.result.title</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="resource_status" enabled="true">
+            <stringProp name="JSON_PATH">$.result.resource_status</stringProp>
+            <stringProp name="EXPECTED_VALUE">completed</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="type: WebService" enabled="true">
+            <stringProp name="JSON_PATH">$.result.type</stringProp>
+            <stringProp name="EXPECTED_VALUE">WebService</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one resource" enabled="true">
+            <stringProp name="JSON_PATH">$.result.resources[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one tag" enabled="true">
+            <stringProp name="JSON_PATH">$.result.tags[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="at least one group" enabled="true">
+            <stringProp name="JSON_PATH">$.result.groups[0]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact name" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].name</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact email" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].email</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].organization</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact branch" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].branch</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="contact role" enabled="true">
+            <stringProp name="JSON_PATH">$.result.contacts[0].role</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">true</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="download_audience" enabled="true">
+            <stringProp name="JSON_PATH">$.result.download_audience</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="view_audience" enabled="true">
+            <stringProp name="JSON_PATH">$.result.view_audience</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="security_class" enabled="true">
+            <stringProp name="JSON_PATH">$.result.security_class</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="metadata_visibility: Public" enabled="true">
+            <stringProp name="JSON_PATH">$.result.metadata_visibility</stringProp>
+            <stringProp name="EXPECTED_VALUE">Public</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="edc_state: DRAFT" enabled="true">
+            <stringProp name="JSON_PATH">$.result.edc_state</stringProp>
+            <stringProp name="EXPECTED_VALUE">DRAFT</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.organization</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="sub_org" enabled="true">
+            <stringProp name="JSON_PATH">$.result.sub_org</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="[BCDC] delete package" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;id&quot;: &quot;${METADATA_ID}&quot;&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_delete</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CKAN API Examples" enabled="false">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">b1fc98e0-7656-4507-a464-f90e96ea6b4b</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="organization_list" enabled="false">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">catalogue.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/organization_list</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="my packages" enabled="false">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="q" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">creator_user_id:26f4a7ed-916c-4eba-b10a-ee6116be63dc</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">q</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_search</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="delete package" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;id&quot;: &quot;83a7663c-3d67-4e7c-81cf-e21098caa20c&quot;&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/package_delete</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="purge dataset" enabled="false">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;id&quot;: &quot;da55e1aa-a93b-4967-a311-6df484a8b52d&quot;&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/dataset_purge</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="create group" enabled="false">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;name&quot;: &quot;API registration test group&quot;&#xd;
+}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">cad.data.gov.bc.ca</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/3/action/group_create</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

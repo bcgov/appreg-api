@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: argg-api
+  name: argg-api
+spec:
+  replicas: 1
+  selector:
+    app: argg-api
+    deploymentconfig: argg-api
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: argg-api
+        deploymentconfig: argg-api
+    spec:
+      containers:
+      - env:
+        - name: BCDC_BASE_URL
+          value: https://cad.data.gov.bc.ca
+        - name: BCDC_API_PATH
+          value: /api/3
+        - name: BCDC_API_KEY
+          value: 
+        - name: BCDC_GROUP_ID
+          value: 730fb6e2-4823-49ca-813f-e94800a5d357
+        - name: BCDC_PACKAGE_OWNER_ORG_ID
+          value: d5316a1b-2646-4c19-9671-c12231c4ec8b
+        - name: BCDC_PACKAGE_OWNER_SUB_ORG_ID
+          value: c1222ef5-5013-4d9a-a9a0-373c54241e77
+        - name: SMTP_SERVER
+          value: apps.smtp.gov.bc.ca
+        - name: SMTP_PORT
+          value: "25"
+        - name: FROM_EMAIL_ADDRESS
+          value: API.Register@gov.bc.ca
+        - name: TARGET_EMAIL_ADDRESSES
+          value: 
+        - name: FROM_EMAIL_PASSWORD
+        image: docker-registry.default.svc:5000/dbc-konga-tools/argg-api:latest
+        imagePullPolicy: Always
+        name: argg-api
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - argg-api
+      from:
+        kind: ImageStreamTag
+        name: argg-api:latest
+        namespace: dbc-konga-tools
+    type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0
