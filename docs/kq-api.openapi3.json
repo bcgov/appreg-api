@@ -7,8 +7,8 @@
         }
     ],
     "info": {
-        "title": "API Registration Generator",
-        "description": "Provides an endpoint to 'register' a new API with DataBC.  Registration refers to creating a metadata record in the BC Data Catalog (if one doesn't already exist), and optionally requesting the API be made accessible through DataBC's API Gateway.",
+        "title": "API Key Request",
+        "description": "Provides an endpoint to request a new production API key that can be used by a given application.",
         "version": "1.0",
         "contact": {
             "name": "Banders Geospatial Systems",
@@ -17,16 +17,16 @@
     },
     "tags": [
         {
-            "name": "Register"
-        },
+            "name": "API Key"
+        }
     ],
     "paths": {
 
 
-        "/register": {
+        "/key_request": {
             "post": {
-                "summary": "Register an API",
-                "description": "A registration action specifies either a URL of an existing metadata record in the BC Data Catalog or details about the about needed to create a new metadata record. Additionally, some basic technical information about the API should be provided, along with requiments for using DataBC's API gateway",
+                "summary": "Create a new request for an API key",
+                "description": "",
                 "tags": [
                     "Register"
                 ],
@@ -34,7 +34,7 @@
                   "content": {
                     "application/json": {
                       "schema": {
-                        "$ref": "#/components/schemas/api_registration_options"
+                        "$ref": "#/components/schemas/key_request_body"
                       }
                     }
                   }
@@ -45,7 +45,7 @@
                     "content": {
                       "application/json": {
                         "schema": {
-                          "$ref": "#/components/schemas/register_api_success"
+                          "$ref": "#/components/schemas/key_request_success"
                         }
                       }                      
                     }
@@ -67,43 +67,57 @@
     "components": {
         "schemas": {
 
-          "api_registration_options": {
+          "key_request_body": {
             "type": "object",
-            "required": [          
-            ],
+            "required": ["submitted_by_person", "app"],
             "properties": {
+              "api": {
+                "type": "object",
+                "$ref": '#/components/schemas/api'
+              },
+              "app": {
+                "type": "object",
+                "$ref": '#/components/schemas/app'
+              },
               "submitted_by_person": {
                 "type": "object",
-                $ref: '#/components/schemas/contact_person'
-              },
-              "existing_metadata_url": {
-                "type": "string"
-              },
-              "metadata_details": {
-                "type": "object",
-                $ref: '#/components/schemas/metadata_details'
-              },
-              "existing_api": {
-                "type": "object",
-                $ref: '#/components/schemas/existing_api'
-              }, 
-              "gateway": {
-                "type": "object",
-                $ref: '#/components/schemas/gateway'
-              },               
+                "$ref": '#/components/schemas/contact_person'
+              }           
             }            
           },
 
-          "metadata_details": {
+          "api": {
             "type": "object",
             "required": [
-              "title", "description", "status", "owner", "submitted_by_person", "security", "license"
+              "title"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              }
+            }            
+          },
+
+
+          "app": {
+            "type": "object",
+            "required": [
+              "title", "url", "description", "type", "status", "owner", "view_audience", "security_class", "license"
             ],
             "properties": {
               "title": {
                 "type": "string"
               },
+              "url": {
+                "type": "string"
+              },
+              "metadata_url": {
+                "type": "string"
+              },
               "description": {
+                "type": "string"
+              },
+              "type": {
                 "type": "string"
               },
               "status": {
@@ -206,60 +220,7 @@
             }            
           },
 
-          "existing_api": {
-            "type": "object",
-            "required": [
-            ],
-            "properties": {
-              "base_url": {
-                "type": "string"
-              },
-              "openapi_spec_url": {
-                "type": "string"
-              },  
-              "supports": {
-                "type": "object",
-                $ref: '#/components/schemas/supports'
-              }                          
-            }            
-          },
-  
-          "supports": {
-            "type": "object",
-            "required": [
-            ],
-            "properties": {
-              "https": {
-                "type": "boolean"
-              },
-              "cors": {
-                "type": "boolean"
-              }                           
-            }            
-          },
-
-          "gateway": {
-            "type": "object",
-            "required": [
-              "use_gateway"
-            ],
-            "properties": {
-              "use_gateway": {
-                "type": "boolean"
-              },
-              "use_throttling": {
-                "type": "boolean"
-              },
-              "restrict_access": {
-                "type": "boolean"
-              },
-              "api_shortname": {
-                "type": "string"
-              }            
-            }            
-          },
-
-          "register_api_success": {
+          "key_request_success": {
             "type": "object",
             "required": [
             ],

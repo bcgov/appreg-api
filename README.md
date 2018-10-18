@@ -1,2 +1,2 @@
-# appreg-api
-Apps Register API with the B.C. Data Catalogue
+# kq-api
+REST API that supports the API Key Request (KQ) application
