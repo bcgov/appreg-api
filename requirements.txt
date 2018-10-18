@@ -2,3 +2,6 @@ requests
 flask
 flask-cors
 jinja2>=2.10
+profanityfilter>=2.0.4
+redis>=2.10.6
+flask-redis>=0.3.0

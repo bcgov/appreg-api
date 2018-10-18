@@ -3,12 +3,18 @@ from jinja2 import Template
 from . import settings
 from .bcdc import package_id_to_web_url, package_id_to_api_url, prepare_package_name, package_create, resource_create, get_organization
 from .emailer import send_email
+from profanityfilter import ProfanityFilter
 import os
 import json
 import uuid
 import requests
 import logging
+from flask_redis import FlaskRedis
 from flask_cors import CORS
+
+#------------------------------------------------------------------------------
+# Init
+#------------------------------------------------------------------------------
 
 app = Flask(__name__)
 
@@ -18,19 +24,24 @@ app = Flask(__name__)
 if "FLASK_DEBUG" in os.environ and os.environ["FLASK_DEBUG"]:
   CORS(app)
 
+#setup data store
+kq_store = FlaskRedis(app)
+
 #setup logging
 app.logger.setLevel(getattr(logging, settings.LOG_LEVEL)) #main logger's level
 
 #inject some initial log messages
 app.logger.info("Initializing {}".format(__name__))
 app.logger.info("Log level is '{}'".format(settings.LOG_LEVEL))
- 
+
+profanity_filter = ProfanityFilter()
 
 #------------------------------------------------------------------------------
 # Constants
 #------------------------------------------------------------------------------
 
 API_SPEC_FILENAME = os.path.join(app.root_path, "../docs/kq-api.openapi3.json")
+STORE_TTL_SECONDS = 432000 #5 days
 
 #------------------------------------------------------------------------------
 # API Endpoints
@@ -62,12 +73,14 @@ def request_key():
   if not contentType or contentType != "application/json":
     return jsonify({"msg": "Invalid Content-Type.  Expecting application/json"}), 400
 
-  #get request req_data
+  #get request body
   try:
     req_data = request.get_json()
-  except Error as e:
-    return jsonify({"msg": "content req_data is not valid json"}), 400
+  except Exception as e:
+    print(e)
+    return jsonify({"msg": "request body is not valid json"}), 400
 
+  #validate the request body
   try:
     req_data = clean_and_validate_req_data(req_data)
   except ValueError as e:
@@ -75,30 +88,31 @@ def request_key():
   except RuntimeError as e:
     app.logger.error("{}".format(e));
     return jsonify({"msg": "An unexpected error occurred while validating the API key request."}), 500
-
-  success_resp = {}
-  
+ 
+  #check for bad language in request body
+  app.logger.info("check bad language")
   try:
-    check_bad_language(req_data["title"])
+    check_bad_language(req_data)
   except ValueError as e:
-    return jsonify({"msg": "Inappropriate language found in the application's title.  {}".format(e)}), 400
+    return jsonify({"msg": "{}".format(e)}), 400
 
-  try:
-    check_bad_language(req_data["description"])
-  except ValueError as e:
-    return jsonify({"msg": "Inappropriate language found in the application's description.  {}".format(e)}), 400
-
+  #save the API key request and generate a verification code
   try:
     verification_code = save_api_key_request(req_data)
   except RuntimeError as e:
     app.logger.error("Unable to save request. {}".format(e))
     return jsonify({"msg": "Server error.  Unable to register API key request."}), 500
 
+  #send the verification code to the user
   try:
     send_verification_email(req_data, verification_code)
   except Exception as e: 
     app.logger.error("Unable to send verification email for new API. {}".format(e))
     return jsonify({"msg": "Server error.  Unable to register API key request."}), 500
+
+  success_resp = {
+    "verification_code": verification_code
+  }
 
   return jsonify(success_resp), 200
 
@@ -145,11 +159,11 @@ def verify_key_request():
 
   send_notification_email(req_data, package_id)
 
-  success_html "The API key request has been submitted.  You will be contacted when the key is ready.  It may take about a week to generate the key.  Todo: show API key request summary here."
+  success_html = "The API key request has been submitted.  You will be contacted when the key is ready.  It may take about a week to generate the key.  Todo: show API key request summary here."
   return success_html, 200
 
 # -----------------------------------------------------------------------------
-# Helper functions
+# Store access
 # -----------------------------------------------------------------------------
 
 def save_api_key_request(req_data):
@@ -158,7 +172,7 @@ def save_api_key_request(req_data):
   is assigned to the request.  The verification code is returned.
   """
   new_verification_code = uuid.uuid4()
-  app.logger.warn("TODO: save request")
+  kq_store.set(new_verification_code, req_data)
   return new_verification_code
 
 def load_api_key_request(verification_code):
@@ -166,18 +180,34 @@ def load_api_key_request(verification_code):
   If the verification_code exists, eturns the corresponding request data 
   (req_data) object. Otherwise returns None.
   """
-  app.logger.warn("TODO: load request data")
-  req_data = None
+  req_data = kq_store.get(verification_code)
   return req_data
 
 def delete_api_key_request(verification_code):
-  app.logger.warn("TODO: delete verification code")
+  """
+  Removes a key request associated with the given verification code
+  """
+  kq_store.delete(verification_code)
 
-def check_bad_language(str):
+# -----------------------------------------------------------------------------
+# Helper functions
+# -----------------------------------------------------------------------------
+
+def check_bad_language(req_data):
   """
-  Checks the given string for inappropriate language (e.g. swear words).
-  raises a ValueError on any problem.  Otherwise return None to indicate no problems
+  Checks for profanity in the request object
+  If any problems is found, raises a ValueError with a description.  
+  Otherwise returns None if no problems.
   """
+  app.logger.info("check bad language")
+  app.logger.info(req_data["app"]["title"])
+  app.logger.info(profanity_filter.is_profane(req_data["app"]["title"]))
+  if profanity_filter.is_profane(req_data["app"]["title"]):
+    raise ValueError("Inappropriate language found in the application's title.")  
+
+  if profanity_filter.is_profane(req_data["app"]["description"]):
+    raise ValueError("Inappropriate language found in the application's description.")
+  
   return None
 
 def clean_and_validate_req_data(req_data):
@@ -222,7 +252,7 @@ def clean_and_validate_req_data(req_data):
   
   if not req_data["app"]["owner"]["contact_person"].get("name"):
     raise ValueError("Missing '$.app.owner.contact_person.name'")
-  if not req_data["app"]["owner"]["app"].get("business_email"):
+  if not req_data["app"]["owner"]["contact_person"].get("business_email"):
     raise ValueError("Missing '$.app.owner.contact_person.business_email'") 
 
   if not req_data["app"]["security"].get("download_audience"):
@@ -395,7 +425,7 @@ def send_verification_email(req_data, verification_code):
   send_email(
     req_data["submitted_by_person"]["business_email"], \
     email_subject="Verify API Key Request - {}".format(req_data["api"]["title"]), \
-    email_body=email_body\
+    email_body=email_body,\
     smtp_server=settings.SMTP_SERVER, \
     smtp_port=settings.SMTP_PORT, \
     from_email_address=settings.FROM_EMAIL_ADDRESS, \
@@ -410,7 +440,7 @@ def send_notification_email(req_data, package_id):
 
   send_email(
     settings.TARGET_EMAIL_ADDRESSES, \
-    email_subject="API Key Request - {}".format(req_data["metadata_details"]["title"]), \
+    email_subject="API Key Request - {}".format(req_data["app"]["title"]), \
     email_body=prepare_notification_email_body(req_data, package_id), \
     smtp_server=settings.SMTP_SERVER, \
     smtp_port=settings.SMTP_PORT, \
@@ -429,13 +459,13 @@ def prepare_verification_email_body(req_data, verification_code):
 
   css_filename = "css/bootstrap.css"
 
-  owner_org = get_organization(req_data["metadata_details"]["owner"]["org_id"])
+  owner_org = get_organization(req_data["app"]["owner"]["org_id"])
 
   with open(css_filename, 'r') as css_file:
     css=css_file.read() #.replace('\n', '')  
 
   request_summary = prepare_request_data_summary_html(req_data)
-  verification_link = "<a href='http://url_here'>http://url_here</a>
+  verification_link = "<a href='http://url_here'>http://url_here</a>"
 
   template = Template("""
   <html>
@@ -466,9 +496,6 @@ def prepare_verification_email_body(req_data, verification_code):
 
   params = {
     "req_data": req_data,
-    "metadata": {
-      "web_url": metadata_web_url
-    }
   }
   html = template.render(params)
   return html
@@ -522,7 +549,7 @@ def prepare_notification_email_body(req_data, metadata_web_url):
   return html
 
 def prepare_request_data_summary_html(req_data):
-  owner_org = get_organization(req_data["metadata_details"]["owner"]["org_id"])
+  owner_org = get_organization(req_data["app"]["owner"]["org_id"])
   template = Template("""
   <table class="table table-condensed">
     <tr>
@@ -549,13 +576,13 @@ def prepare_request_data_summary_html(req_data):
     <tr>
       <th>API Primary Contact Person</th>
       <td>
-        {{req_data["metadata_details"]["owner"]["contact_person"]["name"]}}<br/>
+        {{req_data["app"]["owner"]["contact_person"]["name"]}}<br/>
         Organization:
           {% if req_data["validated"]["owner_contact_sub_org_name"] %} {{req_data["validated"].get("owner_contact_sub_org_name")}}, {% endif %}
           {{req_data["validated"]["owner_contact_org_name"]}}<br/>
-        {{req_data["metadata_details"]["owner"]["contact_person"]["business_email"]}}<br/>
-        {{req_data["metadata_details"]["owner"]["contact_person"]["business_phone"]}}<br/>
-        Role: {{req_data["metadata_details"]["owner"]["contact_person"]["role"]}}
+        {{req_data["app"]["owner"]["contact_person"]["business_email"]}}<br/>
+        {{req_data["app"]["owner"]["contact_person"]["business_phone"]}}<br/>
+        Role: {{req_data["app"]["owner"]["contact_person"]["role"]}}
       </td>
     </tr>
     <tr>
