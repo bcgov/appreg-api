@@ -1,0 +1,17 @@
+version: '3.6'
+ 
+services:
+ 
+  kq_store:
+    image: 'redis'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+
+  captcha_store:
+    image: 'redis'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6389:6379'

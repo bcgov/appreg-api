@@ -1,0 +1,266 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "${HOST}",
+            "description": "API"
+        }
+    ],
+    "info": {
+        "title": "API Key Request",
+        "description": "Provides an endpoint to request a new production API key that can be used by a given application.",
+        "version": "1.0",
+        "contact": {
+            "name": "Banders Geospatial Systems",
+            "email": "brock@bandersgeo.ca"
+        }
+    },
+    "tags": [
+        {
+            "name": "API Key"
+        }
+    ],
+    "paths": {
+
+
+        "/key_request": {
+            "post": {
+                "summary": "Create a new request for an API key",
+                "description": "",
+                "tags": [
+                    "Register"
+                ],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/key_request_body"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Success",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/key_request_success"
+                        }
+                      }                      
+                    }
+                  },
+                  "400": {
+                    "description": "Invalid request body",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/error400"
+                        }
+                      }                      
+                    }
+                  }
+                }
+            },
+        },
+    },
+    "components": {
+        "schemas": {
+
+          "key_request_body": {
+            "type": "object",
+            "required": ["submitted_by_person", "app"],
+            "properties": {
+              "api": {
+                "type": "object",
+                "$ref": '#/components/schemas/api'
+              },
+              "app": {
+                "type": "object",
+                "$ref": '#/components/schemas/app'
+              },
+              "submitted_by_person": {
+                "type": "object",
+                "$ref": '#/components/schemas/contact_person'
+              }           
+            }            
+          },
+
+          "api": {
+            "type": "object",
+            "required": [
+              "title"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              }
+            }            
+          },
+
+
+          "app": {
+            "type": "object",
+            "required": [
+              "title", "url", "description", "type", "status", "owner", "view_audience", "security_class", "license"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "metadata_url": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "object",
+                $ref: '#/components/schemas/owner'
+              },
+              "security": {
+                "type": "object",
+                $ref: '#/components/schemas/security'
+              },
+              "license": {
+                "type": "object",
+                $ref: '#/components/schemas/license'
+              }
+            }            
+          },
+
+          "owner": {
+            "type": "object",
+            "required": [
+              "org_id", "sub_org_id"
+            ],
+            "properties": {
+              "org_id": {
+                "type": "string"
+              },
+              "sub_org_id": {
+                "type": "string"
+              },
+              "contact_person": {
+                "type": "object",
+                $ref: '#/components/schemas/contact_person'
+              }
+            }            
+          },
+
+          "contact_person": {
+            "type": "object",
+            "required": [
+              "name", "business_email", "role"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+              },
+              "org_id": {
+                "type": "string"
+              }, 
+              "sub_org_id": {
+                "type": "string"
+              },              
+              "business_email": {
+                "type": "string"
+              },
+              "business_phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "private": {
+                "type": "string"
+              },
+            }            
+          },
+
+          "security": {
+            "type": "object",
+            "required": [
+              "view_audience", "download_audience", "metadata_visibility", "security_class"
+            ],
+            "properties": {
+              "view_audience": {
+                "type": "string"
+              },
+              "download_audience": {
+                "type": "string"
+              },   
+              "metadata_visibility": {
+                "type": "string"
+              },
+              "security_class": {
+                "type": "string"
+              },                
+            }            
+          },
+
+          "license": {
+            "type": "object",
+            "required": [
+              "license_id"
+            ],
+            "properties": {
+              "license_id": {
+                "type": "integer"
+              }
+            }            
+          },
+
+          "key_request_success": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "new_metadata_record": {
+                "type": "object",
+                $ref: '#/components/schemas/new_metadata_record'
+              }              
+            }            
+          },
+
+          "new_metadata_record": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "web_url": {
+                "type": "string"
+              },
+              "api_url": {
+                "type": "string"
+              }
+            }            
+          },
+
+          "error400": {
+            "type": "object",
+            "required": [
+            ],
+            "properties": {
+              "msg": {
+                "type": "string"
+              }              
+            }            
+          }
+
+        }
+    }
+    
+}
