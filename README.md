@@ -40,6 +40,15 @@ Ideally both Redis databases will be configured to persist their contents to the
 file system.  This will ensure robust handling of API key requests that straddle 
 system restarts.
 
+A docker-compose.yml file is included to launch two the above two Redis databases.
+
+```
+docker-compose up -d
+```
+
+(You may wish to run the Redis databases in some other way without docker-compose.  
+That's okay too.)
+
 ## Run in docker
 
   docker build -t kq-api .
