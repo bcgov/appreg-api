@@ -1,15 +1,15 @@
-from flask import Flask, Response, jsonify, request, redirect, url_for, g
-from jinja2 import Template
+from flask import Flask, Response, jsonify, request, redirect, url_for, g, send_file
 from . import settings
-from .bcdc import package_id_to_web_url, package_id_to_api_url, prepare_package_name, package_create, resource_create, get_organization
+from . import bcdc
+from . import html_templates as html
 from .emailer import send_email
+from .challenge_store import ChallengeStore
+from .request_store import RequestStore
 from profanityfilter import ProfanityFilter
 import os
 import json
-import uuid
 import requests
 import logging
-from flask_redis import FlaskRedis
 from flask_cors import CORS
 
 #------------------------------------------------------------------------------
@@ -24,8 +24,9 @@ app = Flask(__name__)
 if "FLASK_DEBUG" in os.environ and os.environ["FLASK_DEBUG"]:
   CORS(app)
 
-#setup data store
-kq_store = FlaskRedis(app)
+#setup data stores
+kq_store = RequestStore(app, db_url=settings.KQ_STORE_URL, default_ttl_seconds=settings.KQ_STORE_TTL_SECONDS)
+challenge_store = ChallengeStore(app, db_url=settings.CAPTCHA_STORE_URL, default_ttl_seconds=settings.CAPTCHA_STORE_TTL_SECONDS)
 
 #setup logging
 app.logger.setLevel(getattr(logging, settings.LOG_LEVEL)) #main logger's level
@@ -41,7 +42,11 @@ profanity_filter = ProfanityFilter()
 #------------------------------------------------------------------------------
 
 API_SPEC_FILENAME = os.path.join(app.root_path, "../docs/kq-api.openapi3.json")
-STORE_TTL_SECONDS = 432000 #5 days
+STATUS_KEY = "kq_status"
+PROCESSING_STATES = {
+  "AWAITING_VERIFICATION": "awaiting verification",
+  "VERIFIED": "verified"
+}
 
 #------------------------------------------------------------------------------
 # API Endpoints
@@ -98,17 +103,17 @@ def request_key():
 
   #save the API key request and generate a verification code
   try:
-    verification_code = save_api_key_request(req_data)
+    verification_code = kq_store.save_request(req_data)
   except RuntimeError as e:
     app.logger.error("Unable to save request. {}".format(e))
-    return jsonify({"msg": "Server error.  Unable to register API key request."}), 500
+    return jsonify({"msg": "Server error.  Unable to record API key request."}), 500
 
   #send the verification code to the user
   try:
-    send_verification_email(req_data, verification_code)
+    send_verification_email_to_submitter(req_data, verification_code)
   except Exception as e: 
     app.logger.error("Unable to send verification email for new API. {}".format(e))
-    return jsonify({"msg": "Server error.  Unable to register API key request."}), 500
+    return jsonify({"msg": "Server error.  Unable to record API key request."}), 500
 
   success_resp = {
     "verification_code": verification_code
@@ -118,76 +123,149 @@ def request_key():
 
 @app.route('/verify_key_request', methods=["GET"])
 def verify_key_request():
+  """
+  Accepts a veritication code.  Checks that the code corresponds to an active API Key Request.  If so
+  the request is verified and processing of it is initiated:
+  Returns a text/html response
+  """
   app.logger.info("verify_key_request message received")
   verification_code = request.args.get('verification_code')
   
-  req_data = load_api_key_request(verification_code)
+  try:
+    req_data = kq_store.load_request(verification_code)
+  except RuntimeError as e:
+    app.logger.error("Unable to access request from store. {}".format(e))
+    return html.get_err_verify_key_request_store(), 500
+
   if not req_data:
-    err_html = "Verification code is not valid."
-    return err_html, 404
+    return html.get_err_verify_key_request_invalid_code(), 404
+
+  if req_data[STATUS_KEY]["state"] != PROCESSING_STATES["AWAITING_VERIFICATION"]:
+    return html.get_err_verify_key_request_already_done(), 400
 
   metadata_web_url = None
   #create a draft metadata record (if one doesn't exist yet)
-  if not req_data.get("metadata_url"):
+  if not req_data["app"].get("metadata_url"):
     package = None
     try:
       package = create_package(req_data)
       if not package:
         raise ValueError("Unknown reason")
-      #add info about the new metadata record to the response
-      metadata_web_url = package_id_to_web_url(package["id"])
-      metadata_api_url = package_id_to_api_url(package["id"])
-      success_resp["new_metadata_record"] = {
-        "id": package["id"],
-        "web_url": metadata_web_url,
-        "api_url": metadata_api_url
+      #add a status object to the request data.  the updated request data will
+      #be saved back to the store (below) for a brief period of time.
+      new_metadata_record_details = {
+        "package_id": package["id"],
+        "metadata_web_url": bcdc.package_id_to_web_url(package["id"]),
+        "metadata_api_url": bcdc.package_id_to_api_url(package["id"])
       }
+      req_data[STATUS_KEY]["new_metadata_record"] = new_metadata_record_details
     except ValueError as e: #user input errors cause HTTP 400
-      return jsonify({"msg": "Unable to create metadata record in the BC Data Catalog. {}".format(e)}), 400
+      return html.get_err_create_metadata(e), 400
     except RuntimeError as e: #unexpected system errors cause HTTP 500
       app.logger.error("Unable to create metadata record in the BC Data Catalog. {}".format(e))
-      return jsonify({"msg": "Unable to create metadata record in the BC Data Catalog."}), 500
+      return html.get_err_create_metadata(), 500
 
     try:
       create_app_resource(package["id"], req_data)
     except ValueError as e: #perhaps other errors are possible too??  if so, catch those too
       app.logger.warn("Unable to create app root resource associated with the new metadata record. {}".format(e))
+
+  send_notification_email_to_admin(req_data)
+
+  req_data[STATUS_KEY]["state"] = PROCESSING_STATES["VERIFIED"]
+
+  send_notification_email_to_submitter(req_data)
+
+  kq_store.save_request(req_data, verification_code=verification_code)
+
+  return html.get_verify_key_request_success(req_data), 200
+
+@app.route('/status', methods=["GET"])
+def get_status():
+  """
+  Gets a json object which summarizes the processing status of the API Key Request
+  associated with a given verification code.  The status is only available for a certain 
+  amount of time (STATUS_TTL_SECONDS) after the a request is verified .  
+  After that the status is deleted.
+  """
+  app.logger.info("verify_key_request message received")
+  verification_code = request.args.get('verification_code')
   
-  #there is an existing metadata record
-  else:
-    package_id = "TODO: lookup from existing metadata record"
+  try:
+    req_data = kq_store.load_request(verification_code)
+  except RuntimeError as e:
+    app.logger.error("Unable to access request from store. {}".format(e))
+    return jsonify({"msg": "Server error.  Unable to access status of API key request."}), 500
 
-  send_notification_email(req_data, package_id)
+  if not req_data:
+    return jsonify({"msg": "Unknown verification code"}), 404
+  
+  if not STATUS_KEY in req_data:
+    return jsonify({"msg": "Unable to find status of this request"}), 500
 
-  success_html = "The API key request has been submitted.  You will be contacted when the key is ready.  It may take about a week to generate the key.  Todo: show API key request summary here."
-  return success_html, 200
+  status = req_data[STATUS_KEY]
+  return jsonify(status), 200
+  
+@app.route('/challenge', methods=["POST"])
+def new_challenge():
+  """
+  Creates a new random challenge and saves it server-side for 5 days.  
+  A challenge has an public ID (shared with the user)
+  and a SECRET (not shared with the user, except in TEST MODE).  
+  This challenge endpoint is provided to support captchas.  There is a companion endpoint:
+    /challenge/<id>.png which generates a captcha image for the given challenge id.
+  The /request_key requires the user to submit a valid challenge_id and secret.  The secret 
+  will generally be determine by the user looking at the captcha image, although there is another
+  option for use in a development or testing environment:
+  The request body, if specified (application/json), may contain one parameter: 
+    'include_secret': <boolean>
+  This parameter indicates that the response should include the secret.  This is useful
+  in a test environment to support automated test cases, but is not a good idea in a
+  production environment.  The application setting "ALLOW_TEST_MODE" must be explicitly 
+  set to True (or 1) to allow the 'include_secret' parameter to be respected.
+  Response format (application/json):
+    {
+      "challenge_id": "ID HERE"
+    }
+  """
+  include_secret = False
 
-# -----------------------------------------------------------------------------
-# Store access
-# -----------------------------------------------------------------------------
+  #check optional request body.
+  contentType = request.headers.get('Content-Type')
+  if contentType and contentType == "application/json":
+    try:
+      data = request.get_json()
+      include_secret = data.get('include_secret', False)
+    except Exception as e:
+      pass
 
-def save_api_key_request(req_data):
-  """
-  Saves the given API request object to permenant storage.  A new, unique "verification code" 
-  is assigned to the request.  The verification code is returned.
-  """
-  new_verification_code = uuid.uuid4()
-  kq_store.set(new_verification_code, req_data)
-  return new_verification_code
+  try:
+    challenge = challenge_store.new_challenge()
+    print(challenge)
+  except RuntimeError as e:
+    app.logger.error("Unable to create new challenge. {}".format(e))
+    return jsonify({"msg": "Unable to create new challenge"}), 500
 
-def load_api_key_request(verification_code):
-  """
-  If the verification_code exists, eturns the corresponding request data 
-  (req_data) object. Otherwise returns None.
-  """
-  req_data = kq_store.get(verification_code)
-  return req_data
+  resp_success = {
+    "challenge_id": challenge["challenge_id"]
+  }
+  if settings.ALLOW_TEST_MODE and include_secret:
+    resp_success["secret"] = challenge["secret"]
+    app.logger.warn("Challenge secret sent in /challenge response because 'TEST MODE' is active.  This may be suitable for a test environment, but is a security risk in a production environment.")
 
-def delete_api_key_request(verification_code):
+  return jsonify(resp_success), 200
+
+@app.route('/challenge/<challenge_id>.png', methods=["GET"])
+def get_captcha_image(challenge_id):
   """
-  Removes a key request associated with the given verification code
+  Gets a captcha image correspondong to a given challenge id.  The
+  text of the captcha image will show the challenge's secret.
   """
-  kq_store.delete(verification_code)
+  if not challenge_id:
+    return jsonify({"msg": "Not found"}), 404
+
+  captcha_bytes = challenge_store.challenge_id_to_captcha(challenge_id)
+  return send_file(captcha_bytes, mimetype='image/png')
 
 # -----------------------------------------------------------------------------
 # Helper functions
@@ -230,6 +308,8 @@ def clean_and_validate_req_data(req_data):
     req_data["app"]["owner"]["contact_person"] = {}
   if not req_data.get("submitted_by_person"):
     req_data["submitted_by_person"] = {}
+  if not req_data.get("challenge"):
+    req_data["challenge"] = {}
 
   #check that required fields are present
   #--------------------------------------
@@ -274,6 +354,13 @@ def clean_and_validate_req_data(req_data):
   if not req_data["submitted_by_person"].get("business_email"):
     raise ValueError("Missing '$.submitted_by_person.business_email'")
 
+  if not req_data["challenge"].get("id"):
+    raise ValueError("Missing '$.challenge.id'")
+  if not req_data["challenge"].get("secret"):
+    raise ValueError("Missing '$.challenge.secret'")
+  
+  if not challenge_store.is_valid(req_data["challenge"].get("id"), req_data["challenge"].get("secret")):
+    raise ValueError("Captcha challenge failed.")
 
   #defaults
   #--------
@@ -285,36 +372,44 @@ def clean_and_validate_req_data(req_data):
   #validate field values
   #---------------------
   req_data["validated"] = {}
-  owner_org = get_organization(req_data["app"]["owner"].get("org_id"))
+  owner_org = bcdc.get_organization(req_data["app"]["owner"].get("org_id"))
   if owner_org:
     req_data["validated"]["owner_org_name"] = owner_org["title"]
   else:
     raise ValueError("Unknown organization specified in '$.app.owner.org_id'")    
   
-  owner_sub_org = get_organization(req_data["app"]["owner"].get("sub_org_id"))
+  owner_sub_org = bcdc.get_organization(req_data["app"]["owner"].get("sub_org_id"))
   if owner_sub_org:
     req_data["validated"]["owner_sub_org_name"] = owner_sub_org["title"]    
   
-  owner_contact_org = get_organization(req_data["app"]["owner"]["contact_person"].get("org_id"))
+  owner_contact_org = bcdc.get_organization(req_data["app"]["owner"]["contact_person"].get("org_id"))
   if owner_contact_org:
     req_data["validated"]["owner_contact_org_name"] = owner_contact_org["title"]
   else:
     raise ValueError("Unknown organization specified in '$.app.owner.contact_person.org_id'")
 
-  owner_contact_sub_org = get_organization(req_data["app"]["owner"]["contact_person"].get("sub_org_id"))
+  owner_contact_sub_org = bcdc.get_organization(req_data["app"]["owner"]["contact_person"].get("sub_org_id"))
   if owner_contact_sub_org:
     req_data["validated"]["owner_contact_sub_org_name"] = owner_contact_sub_org["title"]
 
-  submitted_by_person_org = get_organization(req_data["submitted_by_person"].get("org_id"))
+  submitted_by_person_org = bcdc.get_organization(req_data["submitted_by_person"].get("org_id"))
   if submitted_by_person_org:
     req_data["validated"]["submitted_by_person_org_name"] = submitted_by_person_org["title"]
 
-  submitted_by_person_sub_org = get_organization(req_data["submitted_by_person"].get("sub_org_id"))
+  submitted_by_person_sub_org = bcdc.get_organization(req_data["submitted_by_person"].get("sub_org_id"))
   if submitted_by_person_sub_org:
     req_data["validated"]["submitted_by_person_sub_org_name"] = submitted_by_person_sub_org["title"]
 
   if not submitted_by_person_org:
     req_data["validated"]["submitted_by_person_org_name"] = req_data["submitted_by_person"].get("org_name")
+
+  #add a "status" attribute to track progress of the the request
+  #-------------------------------------------------------------
+
+  if not STATUS_KEY in req_data:
+    req_data[STATUS_KEY] = {
+      "state": PROCESSING_STATES["AWAITING_VERIFICATION"]
+    }
 
   return req_data
 
@@ -325,7 +420,7 @@ def create_package(req_data):
   """
   package_dict = {
     "title": req_data["app"].get("title"),
-    "name": prepare_package_name(req_data["app"].get("title")),
+    "name": bcdc.prepare_package_name(req_data["app"].get("title")),
     "org": settings.BCDC_PACKAGE_OWNER_ORG_ID,
     "sub_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "owner_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
@@ -356,8 +451,8 @@ def create_package(req_data):
   }
 
   try:
-    package = package_create(package_dict, api_key=settings.BCDC_API_KEY)
-    app.logger.debug("Created metadata record: {}".format(package_id_to_web_url(package["id"])))
+    package = bcdc.package_create(package_dict, api_key=settings.BCDC_API_KEY)
+    app.logger.debug("Created metadata record: {}".format(bcdc.package_id_to_web_url(package["id"])))
     return package
   except (ValueError, RuntimeError) as e: 
     raise e
@@ -389,7 +484,7 @@ def create_app_resource(package_id, req_data):
     "format": format, 
     "name": "Application home"
   }
-  resource = resource_create(resource_dict, api_key=settings.BCDC_API_KEY)
+  resource = bcdc.resource_create(resource_dict, api_key=settings.BCDC_API_KEY)
   return resource
 
 def create_api_spec_resource(package_id, req_data):
@@ -414,198 +509,57 @@ def create_api_spec_resource(package_id, req_data):
 
   return None
 
-def send_verification_email(req_data, verification_code):
+def send_verification_email_to_submitter(req_data, verification_code):
   """
   Sends an email with a link to verify the API key request.
   (Verifying the request will advance to the next step of processing.)
   """
 
-  email_body = prepare_verification_email_body(req_data, verification_code)
+  email_body = html.get_verification_email_body(req_data, verification_code)
 
   send_email(
-    req_data["submitted_by_person"]["business_email"], \
+    to=[req_data["submitted_by_person"]["business_email"]], \
+    bcc=None, \
     email_subject="Verify API Key Request - {}".format(req_data["api"]["title"]), \
     email_body=email_body,\
     smtp_server=settings.SMTP_SERVER, \
     smtp_port=settings.SMTP_PORT, \
     from_email_address=settings.FROM_EMAIL_ADDRESS, \
     from_password=settings.FROM_EMAIL_PASSWORD)
-  app.logger.debug("Sent verification email to: {}".format(settings.TARGET_EMAIL_ADDRESSES))
+  app.logger.debug("Sent verification email to: {}.".format(req_data["submitted_by_person"]["business_email"]))
 
 
-def send_notification_email(req_data, package_id):
+def send_notification_email_to_submitter(req_data):
   """
   Sends a notification email
   """
+  to = [req_data["submitted_by_person"]["business_email"]]
 
   send_email(
-    settings.TARGET_EMAIL_ADDRESSES, \
-    email_subject="API Key Request - {}".format(req_data["app"]["title"]), \
-    email_body=prepare_notification_email_body(req_data, package_id), \
+    to=to, \
+    email_subject="API Key Request - {}".format(req_data["api"]["title"]), \
+    email_body=html.get_notification_email_body(req_data, include_new_metadata_url=False, include_msg=True), \
     smtp_server=settings.SMTP_SERVER, \
     smtp_port=settings.SMTP_PORT, \
     from_email_address=settings.FROM_EMAIL_ADDRESS, \
     from_password=settings.FROM_EMAIL_PASSWORD)
-  app.logger.debug("Sent notification email to: {}".format(settings.TARGET_EMAIL_ADDRESSES))
+  app.logger.debug("Sent notification email to: {}.".format(to))
 
-
-def prepare_verification_email_body(req_data, verification_code):
+def send_notification_email_to_admin(req_data):
   """
-  Creates the body of the verification email
-  :param req_data: the body of the request to /register as a dictionary
-  :param verification_code: the code that the user can submit to indicate that
-    they verify the request
+  Sends a notification email
   """
+  to = settings.TARGET_EMAIL_ADDRESSES.split(",")
 
-  css_filename = "css/bootstrap.css"
-
-  owner_org = get_organization(req_data["app"]["owner"]["org_id"])
-
-  with open(css_filename, 'r') as css_file:
-    css=css_file.read() #.replace('\n', '')  
-
-  request_summary = prepare_request_data_summary_html(req_data)
-  verification_link = "<a href='http://url_here'>http://url_here</a>"
-
-  template = Template("""
-  <html>
-  <head>
-  <style>
-  """
-  +css+
-  """
-  .table-condensed {font-size: 12px;}
-  </style>
-  </head>
-  <title>Verify API Key Request - {{req_data["api"]["title"]}}</title>
-  <body>
-  <div class="container">
-  <h2>API Key Request - {{req_data["api"]["title"]}}</h2>
-
-  <p>A request has been made for a new <strong>{{req_data["api"]["title"]}} API Key</strong>.  This email address was given as the contact email of the person who submitted the request. If you did not request an API key, please disregard this email.  Otherwise, please click the link below (or paste it into a web browser) to confirm that you are the person who requested the API key, and that the details of the request are correct.
-
-  {{verification_link}}
-
-  {{request_summary}}
-
-  </div>
-  </body>
-  </html>
-  """
-  )
-
-  params = {
-    "req_data": req_data,
-  }
-  html = template.render(params)
-  return html
-
-def prepare_notification_email_body(req_data, metadata_web_url):
-  """
-  Creates the body of the notification email
-  :param req_data: the body of the request to /register as a dictionary
-  :param metadata_web_url: a BCDC metadata record url
-  """
-
-  css_filename = "css/bootstrap.css"
-
-  request_summary = prepare_request_data_summary_html(req_data)
-
-  with open(css_filename, 'r') as css_file:
-    css=css_file.read() #.replace('\n', '')  
-
-  template = Template("""
-  <html>
-  <head>
-  <style>
-  """
-  +css+
-  """
-  .table-condensed {font-size: 12px;}
-  </style>
-  </head>
-  <title>API Key Request - {{req_data["api"]["title"]}}</title>
-  <body>
-  <div class="container">
-  <h2>API Key Request - {{req_data["api"]["title"]}}</h2>
-
-  <p>A request for an API key has been made.  The details follow:</p>
-
-  {{request_summary}}
-
-  </div>
-  </body>
-  </html>
-  """
-  )
-
-  params = {
-    "req_data": req_data,
-    "metadata": {
-      "web_url": metadata_web_url
-    }
-  }
-  html = template.render(params)
-  return html
-
-def prepare_request_data_summary_html(req_data):
-  owner_org = get_organization(req_data["app"]["owner"]["org_id"])
-  template = Template("""
-  <table class="table table-condensed">
-    <tr>
-      <th>API for which a key is requested</th>
-      <td>{{req_data["api"]["title"]}}</td>
-    </tr>
-    <tr>
-      <th>Application that will use the API key</th>
-      <td>
-        Title: {{req_data["app"]["title"]}}<br/>
-        Description: {{req_data["app"]["description"]}}<br/>
-        URL: {{req_data["app"]["url"]}}<br/>
-        Metadata Record: <a href="{{req_data["app"]["metadata_url"]}}">{{req_data["app"]["metadata_url"]}}</a><br/>
-      </td>
-    </tr>
-    <tr>
-      <th>API Owner</th>
-      <td>
-        Organization: 
-          {% if req_data["validated"]["owner_sub_org_name"] %} {{req_data["validated"].get("owner_sub_org_name")}}, {% endif %}
-          {{req_data["validated"]["owner_org_name"]}}
-      </td>
-    </tr>
-    <tr>
-      <th>API Primary Contact Person</th>
-      <td>
-        {{req_data["app"]["owner"]["contact_person"]["name"]}}<br/>
-        Organization:
-          {% if req_data["validated"]["owner_contact_sub_org_name"] %} {{req_data["validated"].get("owner_contact_sub_org_name")}}, {% endif %}
-          {{req_data["validated"]["owner_contact_org_name"]}}<br/>
-        {{req_data["app"]["owner"]["contact_person"]["business_email"]}}<br/>
-        {{req_data["app"]["owner"]["contact_person"]["business_phone"]}}<br/>
-        Role: {{req_data["app"]["owner"]["contact_person"]["role"]}}
-      </td>
-    </tr>
-    <tr>
-      <th>Submitted by</th>
-      <td>
-        {{req_data["submitted_by_person"]["name"]}}<br/>
-        Organization:
-          {% if req_data["validated"]["submitted_by_person_sub_org_name"] %} {{req_data["validated"].get("submitted_by_person_sub_org_name")}}, {% endif %}
-          {{req_data["validated"]["submitted_by_person_org_name"]}}<br/>
-        {{req_data["submitted_by_person"]["business_email"]}}<br/>
-        {{req_data["submitted_by_person"]["business_phone"]}}<br/>
-        Role: {{req_data["submitted_by_person"]["role"]}}
-      </td>
-    </tr>
-  </table>
-  """
-  )
-
-  params = {
-    "req_data": req_data,
-  }
-  html = template.render(params)
-  return html
+  send_email(
+    to=to, \
+    email_subject="API Key Request - {}".format(req_data["api"]["title"]), \
+    email_body=html.get_notification_email_body(req_data, include_new_metadata_url=True, include_msg=False), \
+    smtp_server=settings.SMTP_SERVER, \
+    smtp_port=settings.SMTP_PORT, \
+    from_email_address=settings.FROM_EMAIL_ADDRESS, \
+    from_password=settings.FROM_EMAIL_PASSWORD)
+  app.logger.debug("Sent notification email to: {}. ".format(to))
 
 def content_type_to_format(content_type, default=None):
   """
