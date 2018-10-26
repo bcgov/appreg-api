@@ -1,0 +1,176 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kq
+  name: kq
+spec:
+  ports:
+  - name: http-proxy
+    port: 2015
+    targetPort: 2015
+    protocol: TCP
+  - name: api-proxy
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  - name: api-cache
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+  selector:
+    app: kq
+---
+apiVersion: v1
+data:
+  redis.conf: |-
+    appendonly no
+    protected-mode yes
+kind: ConfigMap
+metadata:
+  name: kq-cache
+---
+apiVersion: v1
+data:
+  caddifile: |-
+      0.0.0.0
+      log stdout
+      errors stderr
+      root /srv
+kind: ConfigMap
+metadata:
+  name: caddy-conf
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kq
+  labels:
+    app: kq
+spec:
+  selector:
+    matchLabels:
+      app: kq
+  serviceName: kq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kq
+      annotations:
+    spec:
+      initContainers:
+      - name: ui-dist
+        image: docker-registry.default.svc:5000/dbc-konga-tools/kq-ui:latest
+        command:
+          - "rsync"
+          - "-rv"
+          - "/build/dist/kq-ui/"
+          - "/dist"
+        volumeMounts:
+        - mountPath: /dist
+          name: app-volume
+      containers:
+      - name: www
+        image: abiosoft/caddy:latest
+        command: ["caddy", "-quic", "-conf"]
+        args: ["/conf/Caddyfile"]
+        volumeMounts:
+        - mountPath: /conf
+          name: caddy-conf
+        - mountPath: /srv
+          name: app-volume
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          name: client
+        command: ["redis-server"]
+        args: ["/conf/redis.conf"]
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        volumeMounts:
+        - name: redis-conf
+          mountPath: /conf
+          readOnly: false
+        - name: data
+          mountPath: /data
+          readOnly: false
+      - name: kq-api
+        env:
+        - name: BCDC_BASE_URL
+          value: https://cad.data.gov.bc.ca
+        - name: BCDC_API_PATH
+          value: /api/3
+        - name: BCDC_API_KEY
+          value:
+        - name: BCDC_GROUP_ID
+          value: ${BCDC_GROUP_ID}
+        - name: BCDC_PACKAGE_OWNER_ORG_ID
+          value: ${BCDC_PACKAGE_OWNER_ORG_ID}
+        - name: BCDC_PACKAGE_OWNER_SUB_ORG_ID
+          value: ${BCDC_PACKAGE_OWNER_SUB_ORG_ID}
+        - name: SMTP_SERVER
+          value: apps.smtp.gov.bc.ca
+        - name: SMTP_PORT
+          value: "25"
+        - name: FROM_EMAIL_ADDRESS
+          value: API.KQ@gov.bc.ca
+        - name: TARGET_EMAIL_ADDRESSES
+          value: leo.lou@gov.bc.ca, brock@bandersgeo.ca
+        - name: FROM_EMAIL_PASSWORD
+        - name: KQ_API_URL
+          value:
+        - name: KQ_STORE_URL
+          value: "redis://:@localhost:6379/0"
+        - name: KQ_STORE_TTL_SECONDS
+          value:
+        - name: CAPTCHA_STORE_URL
+          value: "redis://:@localhost:6379/0"
+        - name: CAPTCHA_STORE_TTL_SECONDS
+          value:
+        image: docker-registry.default.svc:5000/dbc-konga-tools/kq-api:latest
+        command: ["/usr/local/bin/gunicorn", "-k", "gevent", "-b", ":8000", "kq_api.main:app"]
+        imagePullPolicy: Always
+      volumes:
+      - name: redis-conf
+        configMap:
+          name: kq-cache
+          items:
+          - key: redis.conf
+            path: redis.conf
+      - name: caddy-conf
+        configMap:
+          name: caddy-conf
+          items:
+          - key: caddifile
+            path: Caddyfile
+      - name: app-volume
+        emptyDir: {}
+      - name: data
+        emptyDir: {}
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - kq-api
+      from:
+        kind: ImageStreamTag
+        name: kq-api:latest
+        namespace: dbc-konga-tools
+    type: ImageChange
