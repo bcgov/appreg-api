@@ -140,7 +140,7 @@ spec:
         - name: KQ_STORE_TTL_SECONDS
           value:
         - name: CAPTCHA_STORE_URL
-          value: "redis://:@localhost:6379/0"
+          value: "redis://:@localhost:6379/1"
         - name: CAPTCHA_STORE_TTL_SECONDS
           value:
         image: docker-registry.default.svc:5000/dbc-konga-tools/kq-api:latest
