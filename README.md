@@ -54,6 +54,9 @@ That's okay too.)
   docker build -t kq-api .
   docker run -p8000:8000 --rm --env-file .env kq-api
 
+...where the file .env contains appropriate values for all of the environment 
+variables listed below.
+
 ### Application environment
 
 The application reads all its application settings from environment variables.  
