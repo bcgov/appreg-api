@@ -46,12 +46,6 @@ if not "BCDC_API_KEY" in os.environ:
 else:
   BCDC_API_KEY = os.environ['BCDC_API_KEY']
 
-#The group that all new metadata records will be added to
-if not "BCDC_GROUP_ID" in os.environ:
-  raise ValueError("Missing 'BCDC_GROUP_ID' environment variable.")
-else:
-  BCDC_GROUP_ID = os.environ['BCDC_GROUP_ID']
-
 #Default organization to list as the owner for new metadata records 
 if not "BCDC_PACKAGE_OWNER_ORG_ID" in os.environ: 
   raise ValueError("Missing 'BCDC_PACKAGE_OWNER_ORG_ID' environment variable.")

@@ -54,8 +54,11 @@ class ChallengeStore(object):
     try:
       self._store.set(challenge_id, secret.encode('utf-8'), ex=self._default_ttl_seconds)
     except redis.exceptions.ConnectionError as e:
-      self.app.logger.error("Unable to connect to Redis database: '{}'.".format(self.db_url))
+      self.app.logger.error("Unable to connect to Redis database: '{}'. {}".format(self.db_url, e))
       raise RuntimeError("Unable to connect to Redis database.")
+    except redis.exceptions.ResponseError as e:
+      self.app.logger.error("Unable to save challenge to Redis database: {}.".format(e))
+      raise RuntimeError("Unable to save challenge.")
 
     return challenge
 
@@ -66,6 +69,9 @@ class ChallengeStore(object):
     except redis.exceptions.ConnectionError as e:
       self.app.logger.error("Unable to connect to Redis database: '{}'.".format(self.db_url))
       raise RuntimeError("Unable to connect to Redis database")
+    except redis.exceptions.ResponseError as e:
+      self.app.logger.error("Unable to get challenge from Redis database: {}.".format(e))
+      raise RuntimeError("Unable to get challenge.")
 
     if secret == secret_to_check:
       return True
@@ -82,6 +88,9 @@ class ChallengeStore(object):
     except redis.exceptions.ConnectionError as e:
       self.app.logger.error("Unable to connect to Redis database: '{}'.".format(self.db_url))
       raise RuntimeError("Unable to connect to Redis database")
+    except redis.exceptions.ResponseError as e:
+      self.app.logger.error("Unable to get challenge from Redis database: {}.".format(e))
+      raise RuntimeError("Unable to get challenge.")
 
     if not secret:
       raise ValueError("No such challenge")

@@ -425,7 +425,7 @@ def create_package(req_data):
     "sub_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "owner_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "notes": req_data["app"].get("description"),
-    "groups": [{"id" : settings.BCDC_GROUP_ID}],
+    #"groups": [{"id" : TODO_GROUP_ID_HERE}],
     "state": "active",
     "resource_status": req_data["app"].get("status", "completed"),
     "type": "WebService",
