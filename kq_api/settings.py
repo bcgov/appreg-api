@@ -9,7 +9,7 @@ import os
 
 BCDC_PACKAGE_OWNER_ORG_ID = "d5316a1b-2646-4c19-9671-c12231c4ec8b" #Ministry of Jobs, Tourism and Skills Training
 BCDC_PACKAGE_OWNER_SUB_ORG_ID = "c1222ef5-5013-4d9a-a9a0-373c54241e77" #DataBC
-STORE_TTL_SECONDS = 86400 #one day
+SECONDS_PER_DAY = 86400 
 ALLOW_TEST_MODE = False
 
 # Load application settings from environment variables
@@ -105,8 +105,7 @@ else:
 
 #The time-to-live (TTL) in seconds for persisted API Key Requests. Once TTL expires, the request will be erased
 #whether or not is has been verified.
-if "KQ_STORE_TTL_SECONDS" in os.environ:
-  KQ_STORE_TTL_SECONDS = os.environ['KQ_STORE_TTL_SECONDS']
+KQ_STORE_TTL_SECONDS = os.environ.get('KQ_STORE_TTL_SECONDS', 5*SECONDS_PER_DAY)
 
 #The URL of the Redis database used for captchas
 if not "CAPTCHA_STORE_URL" in os.environ:
@@ -115,8 +114,7 @@ else:
   CAPTCHA_STORE_URL = os.environ['CAPTCHA_STORE_URL']
 
 #The time-to-live (TTL) in seconds for captchas
-if "CAPTCHA_STORE_TTL_SECONDS" in os.environ:
-  CAPTCHA_STORE_TTL_SECONDS = os.environ['CAPTCHA_STORE_TTL_SECONDS']
+CAPTCHA_STORE_TTL_SECONDS = os.environ.get('CAPTCHA_STORE_TTL_SECONDS', 5*SECONDS_PER_DAY)
 
 #
 # This API's URL
