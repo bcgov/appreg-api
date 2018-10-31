@@ -36,6 +36,13 @@ data:
       0.0.0.0
       log stdout
       errors stderr
+      proxy /api http://localhost:8000 {
+      without /api
+      transparent
+      }
+      proxy /registryapi {$BCDC_API_URL} {
+      without /registryapi
+      }
       root /srv
 kind: ConfigMap
 metadata:
@@ -72,6 +79,9 @@ spec:
           name: app-volume
       containers:
       - name: www
+        env:
+        - name: BCDC_API_URL
+          value: https://cad.data.gov.bc.ca/api/3
         image: abiosoft/caddy:latest
         command: ["caddy", "-quic", "-conf"]
         args: ["/conf/Caddyfile"]
@@ -119,11 +129,11 @@ spec:
         - name: BCDC_API_KEY
           value:
         - name: BCDC_GROUP_ID
-          value: ${BCDC_GROUP_ID}
+          value: 730fb6e2-4823-49ca-813f-e94800a5d357
         - name: BCDC_PACKAGE_OWNER_ORG_ID
-          value: ${BCDC_PACKAGE_OWNER_ORG_ID}
+          value: d5316a1b-2646-4c19-9671-c12231c4ec8b
         - name: BCDC_PACKAGE_OWNER_SUB_ORG_ID
-          value: ${BCDC_PACKAGE_OWNER_SUB_ORG_ID}
+          value: c1222ef5-5013-4d9a-a9a0-373c54241e77
         - name: SMTP_SERVER
           value: apps.smtp.gov.bc.ca
         - name: SMTP_PORT
@@ -136,11 +146,11 @@ spec:
         - name: KQ_API_URL
           value:
         - name: KQ_STORE_URL
-          value: "redis://:@localhost:6379/0"
+          value: "redis://localhost:6379/0"
         - name: KQ_STORE_TTL_SECONDS
           value:
         - name: CAPTCHA_STORE_URL
-          value: "redis://:@localhost:6379/1"
+          value: "redis://localhost:6379/1"
         - name: CAPTCHA_STORE_TTL_SECONDS
           value:
         image: docker-registry.default.svc:5000/dbc-konga-tools/kq-api:latest
