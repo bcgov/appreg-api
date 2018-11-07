@@ -141,6 +141,7 @@ def verify_key_request():
     return html.get_err_verify_key_request_invalid_code(), 404
 
   if req_data[STATUS_KEY]["state"] != PROCESSING_STATES["AWAITING_VERIFICATION"]:
+    print(req_data)
     return html.get_err_verify_key_request_already_done(), 400
 
   metadata_web_url = None
@@ -162,8 +163,8 @@ def verify_key_request():
     except ValueError as e: #user input errors cause HTTP 400
       return html.get_err_create_metadata(e), 400
     except RuntimeError as e: #unexpected system errors cause HTTP 500
-      app.logger.error("Unable to create metadata record in the BC Data Catalog. {}".format(e))
-      return html.get_err_create_metadata(), 500
+      app.logger.error("{}".format(e))
+      return html.get_err_verify_key_request_general(), 500
 
     try:
       create_app_resource(package["id"], req_data)
@@ -298,12 +299,14 @@ def clean_and_validate_req_data(req_data):
     req_data["api"] = {}
   if not req_data.get("app"):
     req_data["app"] = {}
+  if not req_data["app"].get("group"):
+    req_data["app"]["group"] = {}
   if not req_data["app"].get("owner"):
     req_data["app"]["owner"] = {}
   if not req_data["app"].get("security"):
     req_data["app"]["security"] = {}
-  if not req_data["app"].get("license"):
-    req_data["app"]["license"] = {}
+  #if not req_data["app"].get("license"):
+  #  req_data["app"]["license"] = {}
   if not req_data["app"]["owner"].get("contact_person"):
     req_data["app"]["owner"]["contact_person"] = {}
   if not req_data.get("submitted_by_person"):
@@ -322,10 +325,11 @@ def clean_and_validate_req_data(req_data):
     raise ValueError("Missing '$.app.description'")
   if not req_data["app"].get("url"):
     raise ValueError("Missing '$.app.url'")
-  if not req_data["app"].get("type"):
-    raise ValueError("Missing '$.app.type'")
   if not req_data["app"].get("status"):
     raise ValueError("Missing '$.app.status'")
+
+  if not req_data["app"]["group"].get("id"):
+    raise ValueError("Missing '$.app.group.id'")
 
   if not req_data["app"]["owner"].get("org_id"):
     raise ValueError("Missing '$.app.owner.org_id'")
@@ -344,8 +348,8 @@ def clean_and_validate_req_data(req_data):
   if not req_data["app"]["security"].get("security_class"):
     raise ValueError("Missing '$.app.security.security_class'")
 
-  if not req_data["app"]["license"].get("license_id"):
-    raise ValueError("Missing '$.app.license.license_id'")
+  #if not req_data["app"]["license"].get("license_id"):
+  #  raise ValueError("Missing '$.app.license.license_id'")
 
   if not req_data["submitted_by_person"].get("name"):
     raise ValueError("Missing '$.submitted_by_person.name'")
@@ -425,7 +429,7 @@ def create_package(req_data):
     "sub_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "owner_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "notes": req_data["app"].get("description"),
-    #"groups": [{"id" : TODO_GROUP_ID_HERE}],
+    "groups": [{"id" : req_data["app"]["group"].get("id")}],
     "state": "active",
     "resource_status": req_data["app"].get("status", "completed"),
     "type": "WebService",
@@ -437,7 +441,7 @@ def create_package(req_data):
     "view_audience":  req_data["app"]["security"].get("view_audience"),
     "metadata_visibility": req_data["app"]["security"].get("metadata_visibility"),
     "security_class": req_data["app"]["security"].get("security_class"),
-    "license_id": req_data["app"]["license"].get("license_id"),
+    "license_id": settings.BCDC_LICENSE_ID_FOR_NEW_METADATA,
     "contacts": [
       {
         "name": req_data["app"]["owner"]["contact_person"].get("name"),
@@ -450,12 +454,9 @@ def create_package(req_data):
     ]
   }
 
-  try:
-    package = bcdc.package_create(package_dict, api_key=settings.BCDC_API_KEY)
-    app.logger.debug("Created metadata record: {}".format(bcdc.package_id_to_web_url(package["id"])))
-    return package
-  except (ValueError, RuntimeError) as e: 
-    raise e
+  package = bcdc.package_create(package_dict, api_key=settings.BCDC_API_KEY)
+  app.logger.debug("Created metadata record: {}".format(bcdc.package_id_to_web_url(package["id"])))
+  return package
 
 def create_app_resource(package_id, req_data):
   """

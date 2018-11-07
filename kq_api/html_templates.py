@@ -100,8 +100,8 @@ def get_err_verify_key_request_store():
 def get_err_verify_key_request_already_done():
   return _general_msg("Your API key request has already been verified and sent to the API owner for review.  The API owner will contact you.")
 
-def get_err_create_metadata(exception):
-  msg = "Unable to create metadata record in the BC Data Catalog."
+def get_err_create_metadata(exception=None):
+  msg = "Unable to create a metadata record in the BC Data Catalog."
   if exception:
     msg += " {}".format(exception)
   return _general_msg(msg, True)
@@ -124,7 +124,9 @@ def get_verification_email_body(req_data, verification_code):
   request_summary = get_request_data_summary_html(req_data)
 
   verification_url = "{}/verify_key_request?verification_code={}".format(settings.KQ_API_URL, verification_code)
+  verification_button = "<a href='{}'><button type='button' class='btn btn-primary'>Verify Request</button></a>".format(verification_url)
   verification_link = "<a href='{}'>{}</a>".format(verification_url, verification_url)
+
 
   template = Template("""
   <html>
@@ -141,8 +143,9 @@ def get_verification_email_body(req_data, verification_code):
   <div class="container">
   <h2>API Key Request - {{req_data["api"]["title"]}}</h2>
 
-  <p>A request has been made for a new <strong>{{req_data["api"]["title"]}} API Key</strong>.  This email address was given as the contact email of the person who submitted the request. If you did not request an API key, please disregard this email.  Otherwise, please click the link below (or paste it into a web browser) to confirm that you are the person who requested the API key, and that the details of the request are correct.</p><br/>
+  <p>A request has been made for a new <strong>{{req_data["api"]["title"]}} API Key</strong>.  This email address was given as the contact email of the person who submitted the request. If you did not request an API key, please disregard this email.  Otherwise, please click the 'Verify Request' button below (or paste the link below the button into a web browser) to confirm that you are the person who requested the API key, and that the details of the request are correct.</p><br/>
 
+  <center>{{verification_button}}</center><br/><br/>
   <p>{{verification_link}}</p><br/>
 
   {{request_summary}}
@@ -155,6 +158,7 @@ def get_verification_email_body(req_data, verification_code):
 
   params = {
     "req_data": req_data,
+    "verification_button": verification_button,
     "verification_link": verification_link,
     "request_summary": request_summary
   }
