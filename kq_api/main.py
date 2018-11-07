@@ -328,9 +328,6 @@ def clean_and_validate_req_data(req_data):
   if not req_data["app"].get("status"):
     raise ValueError("Missing '$.app.status'")
 
-  if not req_data["app"]["group"].get("id"):
-    raise ValueError("Missing '$.app.group.id'")
-
   if not req_data["app"]["owner"].get("org_id"):
     raise ValueError("Missing '$.app.owner.org_id'")
   
@@ -422,6 +419,9 @@ def create_package(req_data):
   Registers a new package with BCDC
   :param req_data: the req_data of the http request to the /register resource
   """
+  groups = None
+  if req_data["app"]["group"].get("id"):
+    groups = [{"id" : req_data["app"]["group"].get("id")}]
   package_dict = {
     "title": req_data["app"].get("title"),
     "name": bcdc.prepare_package_name(req_data["app"].get("title")),
@@ -429,7 +429,7 @@ def create_package(req_data):
     "sub_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "owner_org": settings.BCDC_PACKAGE_OWNER_SUB_ORG_ID,
     "notes": req_data["app"].get("description"),
-    "groups": [{"id" : req_data["app"]["group"].get("id")}],
+    "groups": groups,
     "state": "active",
     "resource_status": req_data["app"].get("status", "completed"),
     "type": "WebService",
