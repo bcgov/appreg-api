@@ -4,13 +4,20 @@ are loaded from environment variables.
 """
 import os
 
+# Constants
+# -----------------------------------------------------------------------------
+
+TRUTH_VALUES = ["T", "1", "TRUE"]
+SECONDS_PER_DAY = 86400 
+
 # Defaults
 # -----------------------------------------------------------------------------
 
 BCDC_PACKAGE_OWNER_ORG_ID = "d5316a1b-2646-4c19-9671-c12231c4ec8b" #Ministry of Jobs, Tourism and Skills Training
 BCDC_PACKAGE_OWNER_SUB_ORG_ID = "c1222ef5-5013-4d9a-a9a0-373c54241e77" #DataBC
-SECONDS_PER_DAY = 86400 
+BCDC_LICENSE_ID_FOR_NEW_METADATA = 22
 ALLOW_TEST_MODE = False
+CHALLENGE_SECRETS_CASE_SENSITIVE = False
 
 # Load application settings from environment variables
 # -----------------------------------------------------------------------------
@@ -57,6 +64,11 @@ if not "BCDC_PACKAGE_OWNER_SUB_ORG_ID" in os.environ:
   raise ValueError("Missing 'BCDC_PACKAGE_OWNER_SUB_ORG_ID' environment variable.")
 else:
   BCDC_PACKAGE_OWNER_SUB_ORG_ID = os.environ['BCDC_PACKAGE_OWNER_SUB_ORG_ID']
+
+#License ID to use for new metadata records 
+if "BCDC_LICENSE_ID_FOR_NEW_METADATA" in os.environ:
+  BCDC_LICENSE_ID_FOR_NEW_METADATA = os.environ['BCDC_LICENSE_ID_FOR_NEW_METADATA']
+
 
 #
 # Notification Emails
@@ -131,5 +143,9 @@ else:
 #
 
 #Test mode
+if "CHALLENGE_SECRETS_CASE_SENSITIVE" in os.environ:
+  CHALLENGE_SECRETS_CASE_SENSITIVE = os.environ['CHALLENGE_SECRETS_CASE_SENSITIVE'].upper() in TRUTH_VALUES
+
+#Test mode
 if "ALLOW_TEST_MODE" in os.environ:
-  ALLOW_TEST_MODE = os.environ['ALLOW_TEST_MODE'].upper() in ["T", "1", "TRUE"]
+  ALLOW_TEST_MODE = os.environ['ALLOW_TEST_MODE'].upper() in TRUTH_VALUES

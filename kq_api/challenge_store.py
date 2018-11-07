@@ -5,6 +5,7 @@ import uuid
 import string
 import random
 from captcha.image import ImageCaptcha
+from . import settings
 
 #------------------------------------------------------------------------------
 # Constants
@@ -12,7 +13,6 @@ from captcha.image import ImageCaptcha
 
 MIN_CAPTCHA_TEXT_SIZE = 5
 MAX_CAPTCHA_TEXT_SIZE = 6
-SECONDS_PER_DAY = 86400
 
 class ChallengeStore(object):
   """
@@ -22,7 +22,7 @@ class ChallengeStore(object):
   user is human.
   """
   
-  def __init__(self, app, db_url=None, default_ttl_seconds=SECONDS_PER_DAY):
+  def __init__(self, app, db_url=None, default_ttl_seconds=settings.SECONDS_PER_DAY):
     
     self.app = app
     self.db_url = db_url
@@ -72,6 +72,10 @@ class ChallengeStore(object):
     except redis.exceptions.ResponseError as e:
       self.app.logger.error("Unable to get challenge from Redis database: {}.".format(e))
       raise RuntimeError("Unable to get challenge.")
+
+    if not settings.CHALLENGE_SECRETS_CASE_SENSITIVE:
+      secret = secret.lower()
+      secret_to_check = secret_to_check.lower()
 
     if secret == secret_to_check:
       return True

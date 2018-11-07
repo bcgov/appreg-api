@@ -2,8 +2,8 @@ from flask_redis import FlaskRedis
 from flask_redis import redis
 import uuid
 import json
+from . import settings
 
-SECONDS_PER_DAY = 86400
 
 class RequestStore(object):
   """
@@ -11,7 +11,7 @@ class RequestStore(object):
   is assigned a "verification code" which can be used later to access or remove the request.
   """
   
-  def __init__(self, app, db_url=None, default_ttl_seconds=SECONDS_PER_DAY):
+  def __init__(self, app, db_url=None, default_ttl_seconds=settings.SECONDS_PER_DAY):
     
     self.app = app
     self.db_url = db_url
