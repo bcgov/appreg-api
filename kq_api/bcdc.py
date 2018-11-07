@@ -56,7 +56,7 @@ def package_create(package_dict, api_key=None):
   USER_INPUT_ERROR_CODES = [400, 409]
 
   if r.status_code >= 400 and r.status_code not in USER_INPUT_ERROR_CODES:
-    raise RuntimeError("Unable to create metadata record")
+    raise RuntimeError("Unable to create metadata record.  {}".format(r.text))
 
   #get the response object
   response_dict = json.loads(r.text)
