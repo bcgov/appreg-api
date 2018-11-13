@@ -124,7 +124,7 @@ def get_verification_email_body(req_data, verification_code):
   request_summary = get_request_data_summary_html(req_data)
 
   verification_url = "{}/verify_key_request?verification_code={}".format(settings.KQ_API_URL, verification_code)
-  verification_button = "<a href='{}'><button type='button' class='btn btn-primary'>Verify Request</button></a>".format(verification_url)
+  verification_button = "<a class='btn btn-primary' href='{}'>Verify Request</a>".format(verification_url)
   verification_link = "<a href='{}'>{}</a>".format(verification_url, verification_url)
 
 
