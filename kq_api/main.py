@@ -141,7 +141,6 @@ def verify_key_request():
     return html.get_err_verify_key_request_invalid_code(), 404
 
   if req_data[STATUS_KEY]["state"] != PROCESSING_STATES["AWAITING_VERIFICATION"]:
-    print(req_data)
     return html.get_err_verify_key_request_already_done(), 400
 
   metadata_web_url = None
