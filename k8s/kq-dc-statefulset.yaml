@@ -82,7 +82,7 @@ spec:
         env:
         - name: BCDC_API_URL
           value: https://cad.data.gov.bc.ca/api/3
-        image: abiosoft/caddy:latest
+        image: abiosoft/caddy:no-stats
         command: ["caddy", "-quic", "-conf"]
         args: ["/conf/Caddyfile"]
         volumeMounts:
