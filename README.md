@@ -2,7 +2,7 @@
 REST API that supports the API Key Request (KQ) application
 
 This API supports the following endpoints:
-
+```
   GET  /                    OpenAPI specification (returns application/json)
   POST /request_key         Accepts a form submission requesting a new API key, and sends a verification email to the user (returns application/json)
   GET  /verify_key_request  Confirm the request details.  A link to this resource is sent in the verification email (returns text/html)
@@ -13,7 +13,7 @@ This API supports the following endpoints:
 Note: the two challenge resources are intended to support captchas.  A valid 
 challenge ID and challenge secret must be submitted in the POST /request_key 
 body in order for the request to be valid.
-
+```
 
 ## Dependencies
 
