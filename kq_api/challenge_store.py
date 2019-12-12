@@ -1,5 +1,6 @@
 from flask_redis import FlaskRedis
-from flask_redis import redis
+#from flask_redis import redis
+import redis
 import json
 import uuid
 import string
@@ -16,14 +17,14 @@ MAX_CAPTCHA_TEXT_SIZE = 6
 
 class ChallengeStore(object):
   """
-  This class provides an interface to store and retrieve "challenges".  A challenge is a 
+  This class provides an interface to store and retrieve "challenges".  A challenge is a
   public ID and a SECRET.  The public ID can be used to generate a captcha image.
   A user's response to a captcha image can be compared to the challenge SECRET to confirm the
   user is human.
   """
-  
+
   def __init__(self, app, db_url=None, default_ttl_seconds=settings.SECONDS_PER_DAY):
-    
+
     self.app = app
     self.db_url = db_url
 
@@ -64,7 +65,7 @@ class ChallengeStore(object):
 
   def is_valid(self, challenge_id, secret_to_check):
     secret = None
-    try:    
+    try:
       secret = self._store.get(challenge_id).decode('utf-8')
     except redis.exceptions.ConnectionError as e:
       self.app.logger.error("Unable to connect to Redis database: '{}'.".format(self.db_url))
@@ -87,7 +88,7 @@ class ChallengeStore(object):
     to the specified challenge_id
     Returns a ByteIO object with the image content
     """
-    try:    
+    try:
       secret = self._store.get(challenge_id).decode('utf-8')
     except redis.exceptions.ConnectionError as e:
       self.app.logger.error("Unable to connect to Redis database: '{}'.".format(self.db_url))

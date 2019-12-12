@@ -1,5 +1,6 @@
 from flask_redis import FlaskRedis
-from flask_redis import redis
+#from flask_redis import redis
+import redis
 import uuid
 import json
 from . import settings
@@ -10,9 +11,9 @@ class RequestStore(object):
   This class provides an interface to persist API key requests.  Each persisted request
   is assigned a "verification code" which can be used later to access or remove the request.
   """
-  
+
   def __init__(self, app, db_url=None, default_ttl_seconds=settings.SECONDS_PER_DAY):
-    
+
     self.app = app
     self.db_url = db_url
 
@@ -24,7 +25,7 @@ class RequestStore(object):
 
   def save_request(self, req_data, verification_code=None, ttl_seconds=None):
     """
-    Saves the given API request object to permenant storage.  A new, unique "verification code" 
+    Saves the given API request object to permenant storage.  A new, unique "verification code"
     is assigned to the request.  The verification code is returned.
     """
     if not verification_code:
@@ -42,7 +43,7 @@ class RequestStore(object):
 
   def load_request(self, verification_code):
     """
-    If the verification_code exists, eturns the corresponding request data 
+    If the verification_code exists, eturns the corresponding request data
     (req_data) object. Otherwise returns None.
     """
     req_data = None
