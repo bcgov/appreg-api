@@ -7,7 +7,7 @@ ADD . ${APP_DIR}/
 
 # Install all in one.
 RUN groupadd appgroup && useradd -m -g appgroup -s /bin/bash appuser \
- && pip install --no-cache-dir --upgrade pip
+ && pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir gunicorn gevent \
  && pip install --no-cache-dir -r ${APP_DIR}/requirements.txt \
  && chown -R appuser:appgroup ${APP_DIR}
