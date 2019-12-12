@@ -1,5 +1,5 @@
 from flask_redis import FlaskRedis
-from flask_redis import redis
+#from flask_redis import redis
 import json
 import uuid
 import string
