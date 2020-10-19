@@ -33,7 +33,6 @@ jobs:
           username: $GITHUB_ACTOR
           password: ${{ secrets.GITHUB_TOKEN }}
           repository: bcgov/kq-api/kq-api
-          dockerfile: Dockerfile.allinone
           push: true
           tags: ${{ steps.release.outputs.tag_name }}
           tag_with_sha: false
