@@ -1,4 +1,10 @@
 # kq-api
+
+<img src="https://github.com/bcgov/kq-api/workflows/Package%20for%20Dev/badge.svg"></img>
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kq-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=kq-api)
+[![img](https://img.shields.io/badge/Lifecycle-Dormant-ff7f2a)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+
+
 REST API that supports the API Key Request (KQ) application
 
 This API supports the following endpoints:
